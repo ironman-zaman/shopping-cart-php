@@ -1,0 +1,21 @@
+{
+    "name": "zaman/shopping-cart",
+    "type": "project",
+    "license": "GPLv2",
+    "authors": [
+        {
+            "name": "Aktar Uz Zaman",
+            "email": "{ID}+{username}@users.noreply.github.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "ShoppingCart\\" : "admin/classes"
+        },
+        "files" : [
+            "admin/functions/functions.php"
+        ]
+    }
+}
