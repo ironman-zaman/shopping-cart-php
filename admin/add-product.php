@@ -17,15 +17,12 @@ if (isset($_POST['submit'])) {
     }
 }
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Product</title>
-</head>
-<body>
+
+<?php
+/*include header*/
+require_once "templates/header.php";
+?>
+
     <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post" enctype="multipart/form-data">
         <input type="text" placeholder="Eneter Product Name" name="product-name"><br><br>
         <textarea  id="" cols="30" rows="10" placeholder="Enter Prouct Description" name="product-desc"></textarea><br><br>
@@ -33,5 +30,9 @@ if (isset($_POST['submit'])) {
         <input type="file" name="product-image" id=""><br><br>
         <input type="submit" value="Submit" name="submit">
     </form>
-</body>
-</html>
+
+<?php
+/*Include footer */
+require_once "templates/footer.php";
+?>
+    

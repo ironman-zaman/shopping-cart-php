@@ -2,6 +2,7 @@
 
 use ShoppingCart\DataBase;
 use ShoppingCart\Installer;
+use ShoppingCart\Product;
 
 /*Composer Autoloader*/
 require_once "../vendor/autoload.php";
@@ -15,18 +16,33 @@ $installer = new Installer();
 if($installer->createTables($db->conn)===false){
     die("Table is not created");
 }
+
+/*Instantiate product class*/
+$product = new Product();
+/*Grab the list of all products*/
+$productList = $product->showProducts();
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shopping Cart Admin</title>
-</head>
-<body>
-    <div class="wrapper">
-        <a href="add-product.php">Add New Product</a>
+
+<?php
+/*include header*/
+require_once "templates/header.php";
+?>
+
+    <a href="add-product.php">Add New Product</a>
+    <div class="product-list">
+    <?php foreach ($productList as $product) {
+     ?>
+    <h2>
+    <a href="single-product.php?id=<?php echo $product['id']; ?>">
+    <?php echo $product['product_name']; ?>
+    </a>
+    </h2>
+    <?php       
+    }
+    ?>
     </div>
-</body>
-</html>
+
+<?php
+/*Include footer */
+require_once "templates/footer.php";
+?>
