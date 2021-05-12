@@ -47,6 +47,21 @@ class Product{
         $this->conn = null;
     }
 
+    function deleteProduct($productId){
+        try {
+            $this->conn->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+            $stmt = $this->conn->prepare("DELETE FROM products
+            WHERE id = :product_id
+            ");
+            $stmt -> bindParam(':product_id',$productId);
+            $stmt -> execute();
+            echo "Product Deleted";
+        } catch (\PDOException $e) {
+            echo "Error: " . $e->getMessage();
+        }
+        $this->conn = null;
+    }
+
     function showProducts(){
         $results = array();
         try {
