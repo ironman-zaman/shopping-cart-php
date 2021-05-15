@@ -1,5 +1,6 @@
 <?php
 
+use ShoppingCart\ErrorHandler;
 use ShoppingCart\Product;
 require_once "../vendor/autoload.php";
 
@@ -7,11 +8,59 @@ if (isset($_POST['submit'])) {
     $productName = secureData($_POST['product-name']);
     $productDesc = secureData($_POST['product-desc']);
     $productPrice = secureData($_POST['product-price']);
-    $productImg = secureData(basename($_FILES["product-image"]["name"]));
 
-    if (empty($productName) || empty($productDesc) || empty($productPrice) || empty($productImg)) {
-        echo "Please fill up all the fields";
+    //product image
+    $productImg = basename($_FILES["product-image"]["name"]);
+    $target_dir = "uploads/";
+    $target_file = $target_dir . basename($_FILES["product-image"]["name"]);
+    $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
+    
+    /*Form validation*/
+    $errorHandler = new ErrorHandler();
+
+    /*Check to see if all the required fields are given*/
+    if (empty($productName)) {
+        $errorHandler->errors(0,"Product name can't be empty");
+    }
+    if (empty($productDesc)) {
+        $errorHandler->errors(1,"Product description can't be empty");
+    }
+    if (empty($productPrice)) {
+        $errorHandler->errors(2,"Product price can't be empty");
+    }
+
+    /*check if the uploaded file is an image or not*/
+    if(!getimagesize($_FILES["product-image"]["tmp_name"])){
+        $errorHandler->errors(3,"File is not an image");
+    }
+    // Check if file already exists
+    if (file_exists($target_file)) {
+        $errorHandler->errors(4,"Sorry, file already exists.");
+    }
+    // Check file size
+    if ($_FILES["product-image"]["size"] > 500000) {
+        $errorHandler->errors(5,"Sorry, your file is too large.");
+    }
+
+    // Allow certain file formats
+    if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
+    && $imageFileType != "gif" ) {
+    $errorHandler->errors(6,"Sorry, only JPG, JPEG, PNG & GIF files are allowed.");
+    }
+
+
+    /*If there is any error display it*/
+    if ($errorHandler->errors()) {
+        foreach ($errorHandler->errors() as $error) {
+            echo $error.'<br>';
+            $errorHandler = null;
+        }
     }else{
+        /*If for some reason product image is not uploaded exit*/
+        if (!move_uploaded_file($_FILES["product-image"]["tmp_name"], $target_file)) {
+            echo "Sorry, there was an error uploading your file.";
+            die();
+          } 
         $product = new Product();
         $product->insertProduct($productName,$productDesc,$productPrice,$productImg);
     }

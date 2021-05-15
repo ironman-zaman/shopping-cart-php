@@ -1,8 +1,6 @@
 <?php
-/*Autoload*/
-
 use ShoppingCart\Product;
-
+/*Autoload*/
 require_once "../vendor/autoload.php";
 /*Grab the id of the product from GET variable */
 if (!isset($_GET['id'])) {
@@ -24,6 +22,9 @@ require_once "templates/header.php";
 
 <div class="single-product">
 <h1><?php echo $productInfo['product_name']; ?></h1>
+<?php if(!empty($productInfo['product_image'])) { ?>
+     <img src="uploads/<?php echo $productInfo['product_image']; ?>">
+<?php } ?>
 <p><?php echo $productInfo['product_desc']; ?></p>
 <p><small><?php echo $productInfo['product_price']; ?></small></p>
 </div>

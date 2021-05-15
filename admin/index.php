@@ -37,6 +37,9 @@ require_once "templates/header.php";
     <?php echo $product['product_name']; ?>
     </a>
     </h2>
+    <?php if(!empty($product['product_image'])) { ?>
+     <img src="uploads/<?php echo $product['product_image']; ?>">
+     <?php } ?>
     <a href="edit-product.php?id=<?php echo $product['id']; ?>">Edit</a>
     <a href="delete-product.php?id=<?php echo $product['id']; ?>">Delete</a>
     <?php       
