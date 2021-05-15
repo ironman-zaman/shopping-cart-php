@@ -1,8 +1,18 @@
 <?php
-
 use ShoppingCart\ErrorHandler;
 use ShoppingCart\Product;
+
+//composer autoload
 require_once "../vendor/autoload.php";
+
+//Check if system is installed or not
+if (!file_exists("config.php")) {
+    header('Location: installer.php');
+}
+//check if user is logged in or not
+if (!loggedIn()) {
+    header("Location: login.php");
+}
 
 if (isset($_POST['submit'])) {
     $productName = secureData($_POST['product-name']);
@@ -29,26 +39,27 @@ if (isset($_POST['submit'])) {
         $errorHandler->errors(2,"Product price can't be empty");
     }
 
-    /*check if the uploaded file is an image or not*/
-    if(!getimagesize($_FILES["product-image"]["tmp_name"])){
-        $errorHandler->errors(3,"File is not an image");
+    /*if product image is uploaded*/
+    if (!empty($productImg)) {
+        /*check if the uploaded file is an image or not*/
+        if(!getimagesize($_FILES["product-image"]["tmp_name"])){
+            $errorHandler->errors(3,"File is not an image");
+        }
+        // Check if file already exists
+        if (file_exists($target_file)) {
+            $errorHandler->errors(4,"Sorry, file already exists.");
+        }
+        // Check file size
+        if ($_FILES["product-image"]["size"] > 500000) {
+            $errorHandler->errors(5,"Sorry, your file is too large.");
+        }
+        // Allow certain file formats
+        if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
+        && $imageFileType != "gif" ) {
+        $errorHandler->errors(6,"Sorry, only JPG, JPEG, PNG & GIF files are allowed.");
+        }
     }
-    // Check if file already exists
-    if (file_exists($target_file)) {
-        $errorHandler->errors(4,"Sorry, file already exists.");
-    }
-    // Check file size
-    if ($_FILES["product-image"]["size"] > 500000) {
-        $errorHandler->errors(5,"Sorry, your file is too large.");
-    }
-
-    // Allow certain file formats
-    if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
-    && $imageFileType != "gif" ) {
-    $errorHandler->errors(6,"Sorry, only JPG, JPEG, PNG & GIF files are allowed.");
-    }
-
-
+    
     /*If there is any error display it*/
     if ($errorHandler->errors()) {
         foreach ($errorHandler->errors() as $error) {
@@ -56,11 +67,13 @@ if (isset($_POST['submit'])) {
             $errorHandler = null;
         }
     }else{
-        /*If for some reason product image is not uploaded exit*/
+        /*If for some reason product image is not uploaded, exit*/
+        if (!empty($productImg)) {
         if (!move_uploaded_file($_FILES["product-image"]["tmp_name"], $target_file)) {
             echo "Sorry, there was an error uploading your file.";
             die();
           } 
+        }
         $product = new Product();
         $product->insertProduct($productName,$productDesc,$productPrice,$productImg);
     }

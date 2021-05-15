@@ -1,21 +1,23 @@
 <?php
 
 use ShoppingCart\DataBase;
-use ShoppingCart\Installer;
 use ShoppingCart\Product;
+
+//Check if system is installed or not
+if (!file_exists("config.php")) {
+    header('Location: installer.php');
+}
 
 /*Composer Autoloader*/
 require_once "../vendor/autoload.php";
 
+//check if user is logged in or not
+if (!loggedIn()) {
+    header("Location: login.php");
+}
+
 /*Database Connection*/
 $db = new DataBase();
-
-/*Install the system*/
-$installer = new Installer();
-//create tables
-if($installer->createTables($db->conn)===false){
-    die("Table is not created");
-}
 
 /*Instantiate product class*/
 $product = new Product();
